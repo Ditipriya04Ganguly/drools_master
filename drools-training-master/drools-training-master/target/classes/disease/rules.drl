@@ -1,0 +1,30 @@
+package disease;
+import model.Patient;
+import model.PatientDisease;
+import java.time.LocalDate;
+
+rule "Dysphagia"
+when
+$patient: Patient(ICD10=="R13.1" || ICD10=="R13.19"||ICD10=="R13.12"||ICD10=="R13.13"||ICD10=="R13.14")
+$patientdisease: PatientDisease()
+then
+$patientdisease.addPatient($patient,"Dysphagia");
+end
+
+rule "Weight Loss"
+when
+$patient: Patient(ICD10=="R63.4" || ICD10=="E64.0"||ICD10=="E46"||ICD10=="E44.1"||ICD10=="E45")
+$patientdisease: PatientDisease()
+then
+$patientdisease.addPatient($patient,"Weight Loss");
+end
+
+rule "disease1"
+
+  when
+    $d:LocalDate()
+    $patientdisease: PatientDisease()
+    $patient : Patient(status=="Active" && timeframe.isBefore($d.minusMonths(6)) && $patientdisease.checkDisease($patient))
+  then
+    $patient.setPreFill("y");
+end
